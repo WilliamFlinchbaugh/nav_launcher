@@ -5,6 +5,7 @@
   <version>0.0.1</version>
   <description>Launches a Nav2-based Autonomy Stack to view navigation with an Ouster LiDAR sensor</description>
   <maintainer email="williamflinchbaugh@gmail.com">William Flinchbaugh</maintainer>
+  <license>TODO: License declaration</license>
 
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>rviz2</exec_depend>
@@ -14,7 +15,7 @@
   <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>nav2_lifecycle_manager</exec_depend>
   <exec_depend>ouster_ros</exec_depend>
-  <exec_depend>grid_map_ros</exec_depend>
+  <exec_depend>grid_map_visualization</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

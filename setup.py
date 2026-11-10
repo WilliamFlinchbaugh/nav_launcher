@@ -20,6 +20,7 @@ setup(
     maintainer='William Flinchbaugh',
     maintainer_email='williamflinchbaugh@gmail.com',
     description='Launches a Nav2-based Autonomy Stack to view navigation with an Ouster LiDAR sensor',
+    license="TODO",
     extras_require={
         'test': [
             'pytest',

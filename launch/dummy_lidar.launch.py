@@ -29,7 +29,7 @@ def generate_launch_description():
     tf_base_os = Node(
         package='tf2_ros', 
         executable='static_transform_publisher', 
-        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'os_sensor']
+        arguments=['0', '0', '0.6', '0', '0', '0', 'base_link', 'os_sensor']
     )
     tf_base_footprint = Node(
         package='tf2_ros',
@@ -37,28 +37,36 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint']
     )
     
-    # PointCloud to LaserScan Converter
-    pc_to_laserscan_node = Node(
-        package='pointcloud_to_laserscan',
-        executable='pointcloud_to_laserscan_node',
-        name='pointcloud_to_laserscan',
+    # CropBox Filter
+    crop_box_filter = Node(
+        package='pcl_ros',
+        executable='filter_crop_box_node',
+        name='crop_box',
         remappings=[
-            ('cloud_in', '/ouster/points'),
-            ('scan', '/scan')
+            ('input', '/ouster/points'),
+            ('output', '/ouster/points_filtered')
         ],
         parameters=[{
-            'target_frame': 'os_sensor',
-            'transform_tolerance': 0.01,
-            'min_height': 0.0,
-            'max_height': 2.0,
-            'angle_min': -3.14159,
-            'angle_max': 3.14159,
-            'angle_increment': 0.0087,  # Roughly 0.5 degrees
-            'scan_time': 0.1,
-            'range_min': 0.2,
-            'range_max': 100.0,
-            'use_inf': True,
-            'inf_epsilon': 1.0
+            'min_x': -0.5,
+            'max_x': 0.5,
+            'min_y': -0.5,
+            'max_y': 0.5,
+            'min_z': -2.0,
+            'max_z': 2.0,
+            'negative': True,
+            'input_frame': 'os_sensor',
+            'output_frame': 'os_sensor'
+        }]
+    )
+    
+    # Traversability Map
+    traversability_node = Node(
+        package='traversability_gridmap',
+        executable='traversability_node',
+        remappings=[('/point_cloud', '/ouster/points_filtered')],
+        parameters=[{
+            'global_mapping': False,
+            'resolution': 0.05
         }]
     )
 
@@ -99,7 +107,8 @@ def generate_launch_description():
         tf_odom_base,
         tf_base_os,
         tf_base_footprint,
-        pc_to_laserscan_node,
+        crop_box_filter,
+        traversability_node,
         rviz_node,
         nav2_node,
         dummy_lidar_node
